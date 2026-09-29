@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PhishGuard AI - Client-side Machine Learning URL Safety Assessment and Phishing Detector. Analyze URLs safely before opening.">
+  <meta name="theme-color" content="#0a0e17">
+  <title>PhishGuard AI — Website Safety & Threat Assessment</title>
+  
+  <!-- Modern Typography from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Design System CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <main class="app-container">
+    <!-- Header & Cyber Defense Branding -->
+    <header class="app-header">
+      <div class="brand-badge">
+        <span class="pulse-dot"></span>
+        <span>Probabilistic ML Safety Engine</span>
+      </div>
+      <h1 class="app-title">PhishGuard AI URL Scanner</h1>
+      <p class="app-subtitle">
+        Evaluate link characteristics and threat probability before you open them. Analyze URLs safely as static text without executing remote code.
+      </p>
+    </header>
+
+    <!-- URL Input & Scanner Form -->
+    <section class="scanner-card" aria-label="URL Input Area">
+      <form id="scan-form" class="input-form-wrapper" autocomplete="off">
+        <div class="input-bar">
+          <div class="input-icon-wrapper">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+            </svg>
+          </div>
+          <input 
+            type="text" 
+            id="url-input" 
+            class="url-input" 
+            placeholder="Enter website link (e.g., https://example.com or suspicious domain)..." 
+            required 
+            aria-label="Target URL to inspect"
+          />
+          <button type="submit" id="btn-scan" class="btn-scan" aria-label="Scan URL for threats">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <span>Scan URL</span>
+          </button>
+        </div>
+
+        <!-- Interactive Quick Sample Vectors -->
+        <div id="sample-pills" class="sample-pills-section" aria-label="Sample test links">
+          <!-- Populated dynamically by UIController -->
+        </div>
+      </form>
+    </section>
+
+    <!-- Scan Progress Radar Animation -->
+    <section id="scan-progress" class="scan-progress-container" aria-live="polite">
+      <div class="scanning-radar">
+        <div class="radar-ring"></div>
+        <div class="radar-ring"></div>
+        <div class="radar-ring"></div>
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="m4.93 4.93 4.24 4.24"></path>
+          <path d="m14.83 9.17 4.24-4.24"></path>
+          <path d="m14.83 14.83 4.24 4.24"></path>
+          <path d="m9.17 14.83-4.24 4.24"></path>
+        </svg>
+      </div>
+      <h2 id="scan-step-title" class="scan-step-title">Extracting URL Features...</h2>
+      <p id="scan-step-desc" class="scan-step-desc">Lexical, structural, Shannon entropy, and host analysis</p>
+      <div class="progress-track">
+        <div id="progress-bar-fill" class="progress-bar-fill"></div>
+      </div>
+    </section>
+
+    <!-- Prominent Result Section -->
+    <section id="result-section" class="result-section" aria-live="assertive">
+      <div id="result-card" class="result-card-prominent">
+        
+        <!-- Top Status Banner -->
+        <div class="result-top-banner">
+          <div class="status-badge-group">
+            <div id="status-icon-box" class="status-icon-box">
+              <!-- Rendered dynamically -->
+            </div>
+            <div class="status-text-details">
+              <span id="status-sub-indicator" class="status-sub-indicator">🟢 LIKELY SAFE</span>
+              <h2 id="status-main-title" class="status-main-title">Likely Safe to Open</h2>
+            </div>
+          </div>
+
+          <!-- Risk Metrics & Gauge Cluster -->
+          <div class="metrics-cluster">
+            <div class="metric-gauge-card">
+              <div class="circular-gauge">
+                <svg class="gauge-svg" width="58" height="58" viewBox="0 0 80 80">
+                  <circle class="gauge-bg" cx="40" cy="40" r="36"></circle>
+                  <circle id="gauge-circle" class="gauge-progress" cx="40" cy="40" r="36"></circle>
+                </svg>
+                <div id="gauge-score-val" class="gauge-text">0</div>
+              </div>
+              <div class="metric-labels">
+                <span class="metric-label-title">Risk Score</span>
+                <span id="metric-risk-level" class="metric-label-val">LOW</span>
+              </div>
+            </div>
+
+            <div class="confidence-card">
+              <div class="metric-label-title">Model Confidence</div>
+              <div id="metric-confidence-val" class="confidence-val">94%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scanned Target URL Bar -->
+        <div class="scanned-target-bar">
+          <span class="target-label">Target URL:</span>
+          <span id="scanned-url-display" class="target-url-text">https://example.com</span>
+        </div>
+
+        <!-- Primary Safety Statement -->
+        <div id="safety-statement-box" class="safety-statement-box">
+          Based on the analyzed URL characteristics, this URL appears low-risk. However, no automated detector can guarantee that a website is completely safe.
+        </div>
+
+        <!-- "Why?" Section -->
+        <div class="why-section">
+          <h3 class="section-subheading">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            Why?
+          </h3>
+          <ul id="triggers-list" class="triggers-list">
+            <!-- Dynamically populated -->
+          </ul>
+        </div>
+
+        <!-- "What does this mean?" Explanation Callout -->
+        <div class="meaning-callout-box">
+          <div class="meaning-header">What does this mean?</div>
+          <div id="meaning-text-box" class="meaning-text">
+            The URL does not show significant suspicious characteristics according to the trained model. This does not guarantee that the website is completely safe.
+          </div>
+        </div>
+
+        <!-- Safety Action Area -->
+        <div id="action-area" class="action-area">
+          <!-- Dynamically populated action buttons -->
+        </div>
+
+      </div>
+
+      <!-- Collapsible Technical Details & Decoupled Threat Intelligence -->
+      <div class="technical-grid-section">
+        <div id="tech-accordion-header" class="collapsible-header" role="button" tabindex="0" aria-expanded="false">
+          <div class="collapsible-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            <span>Technical Inspection & Threat Intelligence Details</span>
+          </div>
+          <svg id="tech-accordion-icon" class="collapsible-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </div>
+
+        <div id="tech-accordion-body" class="collapsible-body">
+          <h4 style="font-size: 0.95rem; margin-bottom: 0.75rem; color: var(--text-secondary);">Extracted Lexical & Structural Metrics:</h4>
+          <div id="feature-matrix-grid" class="feature-matrix-grid">
+            <!-- Rendered dynamically -->
+          </div>
+
+          <!-- Decoupled Threat Intelligence Panel (Requirement 8) -->
+          <div class="threat-intel-box">
+            <div class="threat-intel-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+              External Threat Intelligence Telemetry
+            </div>
+            <div id="threat-intel-status" class="threat-intel-status">Checking Static Feeds...</div>
+            <div id="threat-intel-feed-list" class="threat-intel-feed-list">
+              <!-- Rendered dynamically -->
+            </div>
+            <div class="threat-intel-disclaimer">
+              Notice: External threat intelligence feeds (e.g. Google Safe Browsing / VirusTotal / URLhaus) provide independent blacklist confirmation and are kept separate from the machine-learning heuristic scoring.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer Disclaimer -->
+    <footer class="app-footer">
+      <div><strong>PhishGuard AI</strong> v2.4.0 • Zero-Execution Text-Based URL Safety Detector</div>
+      <p class="footer-disclaimer">
+        Disclaimer: Machine-learning evaluations and statistical risk scores are probabilistic estimates based on URL lexical and heuristic patterns. Automated detection cannot guarantee complete website safety or replace comprehensive security reviews.
+      </p>
+    </footer>
+  </main>
+
+  <!-- Safety Confirmation Modal (Explicit Navigation Opt-in) -->
+  <div id="safety-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="safety-modal-card">
+      <div class="modal-header">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-cyan);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        <h3 id="modal-title" class="modal-title">Safety Confirmation</h3>
+      </div>
+      <p id="modal-body-text" class="modal-body-text">
+        PhishGuard AI has not found major suspicious characteristics, but automated analysis cannot guarantee safety. Continue?
+      </p>
+      <div id="modal-url-display" class="modal-url-display">https://example.com</div>
+      <div class="modal-actions-bar">
+        <button id="btn-modal-cancel" class="btn-modal-cancel">Cancel</button>
+        <button id="btn-modal-confirm" class="btn-modal-confirm">Yes, Open Website</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Modular Application Scripts -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
