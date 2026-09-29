@@ -32,7 +32,7 @@ Open:
 http://127.0.0.1:5000
 ```
 
-Live working on the website : 
+Live working on the website :  https://varunmusale2007-a11y.github.io/Phishing-Detector/
 
 ## 🧠 How It Works
 
